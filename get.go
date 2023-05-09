@@ -65,9 +65,8 @@ func updateRepository(path string) error {
 	return cmd.Run()
 }
 
-func cloneRepository(url, path string) error {
-	cloneURL := fmt.Sprintf("https://%s.git", url)
-	cmd := exec.Command("git", "clone", cloneURL, path)
+func cloneRepository(repoURL, path string) error {
+	cmd := exec.Command("git", "clone", repoURL, path)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
@@ -100,7 +99,8 @@ func main() {
 		return
 	}
 
-	if err := cloneRepository(url, path); err != nil {
+	repoURL := fmt.Sprintf("https://%s.git", url)
+	if err := cloneRepository(repoURL, path); err != nil {
 		fmt.Printf("Error cloning repository: %s\n", err)
 		return
 	}
