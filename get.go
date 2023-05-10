@@ -36,17 +36,7 @@ func parts(url string) (domain, account, repo string, err error) {
 	return ps[0], ps[1], strings.Join(ps[2:], "/"), nil
 }
 
-type Getwder interface {
-	Getwd() (dir string, err error)
-}
-
-type GetwdFunc func() (string, error)
-
-func (fn GetwdFunc) Getwd() (dir string, err error) {
-	return fn()
-}
-
-func rooted(gopath string, pwd func() (dir string, err error)) string {
+func rooted(gopath string, pwd func() (string, error)) string {
 	dir := fmt.Sprintf("%s/%s", gopath, "src")
 	if gopath == "" {
 		fmt.Println("GOPATH environment variable is not set.")
