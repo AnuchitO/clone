@@ -3,9 +3,6 @@ package main
 import (
 	"fmt"
 	"testing"
-
-	"github.com/golang/mock/gomock"
-	mocks "github.com/turbinelabs/nonstdlib/os"
 )
 
 func TestStrip(t *testing.T) {
@@ -95,11 +92,12 @@ func TestParts(t *testing.T) {
 
 func TestRoot(t *testing.T) {
 	t.Run("with GOPATH environment variable set", func(t *testing.T) {
-		ctrl := gomock.NewController(t)
-		defer ctrl.Finish()
-		mockOS := mocks.NewMockOS(ctrl)
+		mock := func() (string, error) {
+			return "", nil
+		}
 
-		got := rooted("/user/go", mockOS)
+		got := rooted("/user/go", GetwdFunc(mock))
+
 		want := "/user/go/src"
 		if got != want {
 			t.Errorf("Root directory is %s, expected %s", got, want)
@@ -107,12 +105,11 @@ func TestRoot(t *testing.T) {
 	})
 
 	t.Run("without GOPATH environment variable set", func(t *testing.T) {
-		ctrl := gomock.NewController(t)
-		defer ctrl.Finish()
-		mockOS := mocks.NewMockOS(ctrl)
-		mockOS.EXPECT().Getwd().Return("/current/path/dir", nil)
+		mock := func() (string, error) {
+			return "/current/path/dir", nil
+		}
 
-		got := rooted("", mockOS)
+		got := rooted("", GetwdFunc(mock))
 		want := "/current/path/dir"
 		if got != want {
 			t.Errorf("Root directory is %s, expected %s", got, want)
