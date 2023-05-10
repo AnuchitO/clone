@@ -26,4 +26,4 @@ git commit -m "Bump version to $new_version"
 git tag -a "$new_version" -m "Version $new_version"
 
 echo "Please Push changes and tag to remote"
-echo "git push && git push --tags"
+echo "git push origin && git push origin --tags"
