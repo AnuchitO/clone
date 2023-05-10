@@ -64,6 +64,7 @@ func cloneRepository(repoURL, path string) error {
 
 func main() {
 	if len(os.Args) < 2 {
+		fmt.Println("get command is version:", version)
 		fmt.Print(usage)
 		return
 	}
