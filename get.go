@@ -46,12 +46,12 @@ func (fn GetwdFunc) Getwd() (dir string, err error) {
 	return fn()
 }
 
-func rooted(gopath string, os Getwder) string {
+func rooted(gopath string, pwd func() (dir string, err error)) string {
 	dir := fmt.Sprintf("%s/%s", gopath, "src")
 	if gopath == "" {
 		fmt.Println("GOPATH environment variable is not set.")
 		var err error
-		dir, err = os.Getwd()
+		dir, err = pwd()
 		fmt.Printf("Using current directory %s as root dir. error: %v\n", dir, err)
 	}
 	return dir
@@ -85,7 +85,7 @@ func main() {
 		return
 	}
 
-	dir := rooted(os.Getenv("GOPATH"), GetwdFunc(os.Getwd))
+	dir := rooted(os.Getenv("GOPATH"), os.Getwd)
 	path := filepath.Join(dir, domain, account, repo)
 
 	if _, err := os.Stat(path); err == nil {

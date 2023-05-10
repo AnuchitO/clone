@@ -96,7 +96,7 @@ func TestRoot(t *testing.T) {
 			return "", nil
 		}
 
-		got := rooted("/user/go", GetwdFunc(mock))
+		got := rooted("/user/go", mock)
 
 		want := "/user/go/src"
 		if got != want {
@@ -109,7 +109,7 @@ func TestRoot(t *testing.T) {
 			return "/current/path/dir", nil
 		}
 
-		got := rooted("", GetwdFunc(mock))
+		got := rooted("", mock)
 		want := "/current/path/dir"
 		if got != want {
 			t.Errorf("Root directory is %s, expected %s", got, want)
