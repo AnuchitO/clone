@@ -62,18 +62,11 @@ func cloneRepository(repoURL, path string) error {
 	return cmd.Run()
 }
 
-func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("get command is version:", version)
-		fmt.Print(usage)
-		return
-	}
-
-	url := strip(os.Args[1])
+func get(args string) string {
+	url := strip(args)
 	domain, account, repo, err := parts(url)
 	if err != nil {
-		fmt.Println("Invalid repository URL format.")
-		return
+		return "Invalid repository URL format."
 	}
 
 	dir := rooted(os.Getenv("GOPATH"), os.Getwd)
@@ -82,17 +75,26 @@ func main() {
 	if _, err := os.Stat(path); err == nil {
 		fmt.Printf("Repository already exists at %s, updating...\n", path)
 		if err := updateRepository(path); err != nil {
-			fmt.Printf("Error updating repository: %s\n", err)
-			return
+			return fmt.Sprintf("Error updating repository: %s\n", err)
 		}
-		fmt.Println("Repository updated successfully!")
-		return
+		return "Repository updated successfully!"
 	}
 
 	repoURL := fmt.Sprintf("https://%s.git", url)
 	if err := cloneRepository(repoURL, path); err != nil {
-		fmt.Printf("Error cloning repository: %s\n", err)
+		return fmt.Sprintf("Error cloning repository: %#v\n", err.Error())
+	}
+	return "Repository cloned successfully!"
+}
+
+func main() {
+	if len(os.Args) < 2 {
+		fmt.Println("get command is version:", version)
+		fmt.Print(usage)
 		return
 	}
-	fmt.Println("Repository cloned successfully!")
+
+	args := os.Args[1]
+	result := get(args)
+	fmt.Println(result)
 }
