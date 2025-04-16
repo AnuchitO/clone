@@ -3,11 +3,12 @@ package main
 import (
 	"errors"
 	"fmt"
-
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/atotto/clipboard"
 )
 
 var errInvalidURLFormat = errors.New("invalid repository URL format")
@@ -62,11 +63,11 @@ func cloneRepository(repoURL, path string) error {
 	return cmd.Run()
 }
 
-func get(args string) string {
+func get(args string) (string, string) {
 	url := strip(args)
 	domain, account, repo, err := parts(url)
 	if err != nil {
-		return "Invalid repository URL format."
+		return "Invalid repository URL format.", ""
 	}
 
 	dir := rooted(os.Getenv("GOPATH"), os.Getwd)
@@ -75,16 +76,16 @@ func get(args string) string {
 	if _, err := os.Stat(path); err == nil {
 		fmt.Printf("Repository already exists at %s, updating...\n", path)
 		if err := updateRepository(path); err != nil {
-			return fmt.Sprintf("Error updating repository: %s\n", err)
+			return fmt.Sprintf("Error updating repository: %s\n", err), path
 		}
-		return "Repository updated successfully!"
+		return "Repository updated successfully!", path
 	}
 
 	repoURL := fmt.Sprintf("https://%s.git", url)
 	if err := cloneRepository(repoURL, path); err != nil {
-		return fmt.Sprintf("Error cloning repository: %#v\n", err.Error())
+		return fmt.Sprintf("Error cloning repository: %#v\n", err.Error()), path
 	}
-	return "Repository cloned successfully!"
+	return "Repository cloned successfully!", path
 }
 
 func main() {
@@ -95,6 +96,7 @@ func main() {
 	}
 
 	args := os.Args[1]
-	result := get(args)
+	result, path := get(args)
 	fmt.Println(result)
+	clipboard.WriteAll(path)
 }
