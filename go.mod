@@ -1,4 +1,4 @@
-module github.com/anuchito/get
+module github.com/anuchito/clone
 
 go 1.24
 

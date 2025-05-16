@@ -13,12 +13,12 @@ import (
 
 var errInvalidURLFormat = errors.New("invalid repository URL format")
 
-const usage = `Usage: get <repository URL>
+const usage = `Usage: clone <repository URL>
 Example repository URLs:
- get github.com/username/repo
- get github.com/username/repo.git
- get http://github.com/username/repo
- get https://github.com/username/repo
+ clone github.com/username/repo
+ clone github.com/username/repo.git
+ clone http://github.com/username/repo
+ clone https://github.com/username/repo
 `
 
 func strip(url string) string {
